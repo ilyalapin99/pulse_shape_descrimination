@@ -1,0 +1,17 @@
+# Виртуальное окружение
+venv/
+env/
+
+# Кэш Python и Jupyter
+__pycache__/
+*.pyc
+.ipynb_checkpoints/
+
+# Данные и датасеты (генерируемые файлы)
+data/
+datasets/
+
+# Веса моделей PyTorch
+*.pt
+*.pth
+models/

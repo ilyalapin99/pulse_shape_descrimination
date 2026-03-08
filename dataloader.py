@@ -20,7 +20,7 @@ def generate_impulse(rise_time, time_slow, fast_time, amp, pulse_start, B, lengt
     pulse[mask] = scintillation_model(rise_time, time_slow, fast_time, amp, update_time, pulse_start, B)
     
     return t, pulse / np.max(pulse) * amp
-def generate_data(number_of_samples = 20000, amp_range=(7, 25), length=200, noise_std = 1):
+def generate_data(number_of_samples, amp_range, length, noise_std):
     
     #Данные
     X = np.zeros((number_of_samples, length))

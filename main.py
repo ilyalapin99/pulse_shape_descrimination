@@ -6,11 +6,13 @@ from dataset import get_dataloader
 from model import NGnet
 from train import Trainer
 import matplotlib.pyplot as plt
+from psd import plot_psd_scatter
+from statistic_of_errors import evaluate_psd
 # %%
 if __name__ == "__main__":
     # %%
     #Данные
-    train_dataloader, test_dataloader = get_dataloader(number_of_samples = 20000, amp_range=(2, 15), length=200, noise_std = 1)
+    train_dataloader, test_dataloader, (X_val, y_val) = get_dataloader(number_of_samples = 20000, amp_range=(2, 15), length=200, noise_std = 1)
     # %%
     #Модель
     device = 'cuda' if torch.cuda.is_available() else 'cpu'
@@ -33,7 +35,8 @@ if __name__ == "__main__":
     )
     # %%
     #Отрисовка
+    plot_psd_scatter(X=X_val, start_time=20, tail_time=30, y=y_val)
     
 
-
-
+    # %%
+    min_errors, best_treshold = evaluate_psd(X_val, y_val)

@@ -43,6 +43,7 @@ def generate_data(number_of_samples, amp_range, length, noise_std):
             pulse_start=20,
             B=PARAMS_GAMMA['B'],
         )
+        
         X[i] = gamma_pulse + np.random.normal(loc=0, scale=noise_std, size=length)
         y[i] = 1
 

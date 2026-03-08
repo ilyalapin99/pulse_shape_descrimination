@@ -6,16 +6,20 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 class PulseDataset(Dataset):
-    def __init__(self, X, y, amplitudes):
+    def __init__(self, X, y, amplitudes, transform=True):
         self.X = X
         self.y = y
         self.amplitudes = amplitudes
+        self.transform = transform
     
     def __len__(self):
         return len(self.y)
     
     def __getitem__(self, idx):
-        return self.X[idx], self.y[idx], self.amplitudes[idx]
+        x = self.X[idx]
+        if self.transform:
+            x = x / np.max(x)
+        return x, self.y[idx], self.amplitudes[idx]
 
 def get_dataloader(number_of_samples, amp_range, length, noise_std):
     
@@ -38,7 +42,7 @@ def get_dataloader(number_of_samples, amp_range, length, noise_std):
     train_loader = DataLoader(train_dataset, batch_size=64, shuffle=True)
     test_loader = DataLoader(test_dataset, batch_size=64, shuffle=False)
 
-    return train_loader, test_loader
+    return train_loader, test_loader, (X_test, y_test)
 
 
 def show_statictics(X, y, amp, label):

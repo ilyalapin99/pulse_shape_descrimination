@@ -28,14 +28,15 @@ def evaluate_psd(X, y, start_time=20, tail_time=30):
     factor = np.max(whole_energy[neutron_mask]) / np.max(whole_energy[gamma_mask])
 
     #gamma & neutron plot 
-    plt.figure(figsize=(15, 8))
+    plt.figure(figsize=(12, 8))
     plt.scatter(whole_energy[gamma_mask] * factor, psd_value[gamma_mask], alpha=0.1, c='green', label='Gamma')
     plt.scatter(whole_energy[neutron_mask], psd_value[neutron_mask], alpha=0.1, c='blue', label='Neutron')
     plt.axhline(y=best_treshold, color='red', linestyle='--', label='Порог PSD')
     plt.ylim(0, 1)
-    plt.title("PSD")
-    plt.xlabel("Energy")
-    plt.ylabel("PSD")
+    plt.title("Интегральное разделение (PSD)", fontsize=14)
+    plt.xlabel("Энергия (отн. ед.)", fontsize=12)
+    plt.ylabel("Параметр PSD ($Q_{tail}/Q_{total}$)", fontsize=12)
+    plt.xlim(0.0, 350)
     plt.show()
 
     

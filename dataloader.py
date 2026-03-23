@@ -62,18 +62,21 @@ def generate_data(number_of_samples, amp_range, length, noise_std):
     return X, y, np.hstack([gamma_amplitudes, neutron_amplitudes])
     
 if __name__ == '__main__':
-    X, y, amplitudes = generate_data(number_of_samples = 20000, amp_range=(2, 15), length=200, noise_std=0)
+    X, y, amplitudes = generate_data(number_of_samples = 20000, amp_range=(2, 15), length=200, noise_std=1)
     mask_gamma = (y == 1)
     mask_neutron = (y == 0)
+    plt.figure(figsize=(10, 6))
     for i, x in enumerate(X[mask_gamma]):
-        plt.plot(x)
-        if i == 2:
+        plt.plot(x / np.max(x), color='green', label=r'$\gamma$-квант')
+        if i == 0:
             break
-    for i, x in enumerate(X[mask_neutron]):
-        plt.plot(x)
-        if i == 2:
-            break
+    """for i, x in enumerate(X[mask_neutron]):
+        plt.plot(x / np.max(x), color='blue', label=r'Нейтрон')
+        if i == 0:
+            break"""
+    plt.title("Сравнение формы сцинтилляционного отклика", fontsize=14)
+    plt.xlabel("Время (нс)", fontsize=12)
+    plt.ylabel("Нормированная амплитуда", fontsize=12)
+    plt.legend(loc='upper right', fontsize=12, frameon=True, shadow=True)
+    plt.show()
     
-    plt.show()
-    plt.hist(amplitudes, bins=30)
-    plt.show()

@@ -20,13 +20,13 @@ def plot_psd_scatter(X, start_time, tail_time, y):
     factor = np.max(whole_energy[neutron_mask]) / np.max(whole_energy[gamma_mask])
 
     #gamma & neutron plot 
-    plt.figure(figsize=(15, 8))
+    plt.figure(figsize=(12, 8))
     plt.scatter(whole_energy[gamma_mask] * factor, psd[gamma_mask], alpha=0.1, c='green', label='Gamma')
     plt.scatter(whole_energy[neutron_mask], psd[neutron_mask], alpha=0.1, c='blue', label='Neutron')
     plt.ylim(0, 1)
-    plt.title("PSD")
-    plt.xlabel("Energy")
-    plt.ylabel("PSD")
+    plt.title("Ограничение метода интегрального разделения (PSD)", fontsize=14)
+    plt.xlabel("Энергия (отн. ед.)", fontsize=12)
+    plt.ylabel("Параметр PSD ($Q_{tail}/Q_{total}$)", fontsize=12)
     plt.show()
 
 if __name__ == "__main__":

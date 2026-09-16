@@ -1,4 +1,4 @@
-from dataloader import generate_data
+from src.data.dataloader import generate_data
 import numpy as np
 import matplotlib.pyplot as plt
 from scipy.integrate import simpson
@@ -30,5 +30,5 @@ def plot_psd_scatter(X, start_time, tail_time, y):
     plt.show()
 
 if __name__ == "__main__":
-    X, y, amplitudes = generate_data(number_of_samples = 20000, amp_range=(2, 15), length=200, noise_std = 1)
+    X, y, amplitudes = generate_data(number_of_samples = 4000, amp_range=(2, 15), length=200, noise_std = 1)
     plot_psd_scatter(X=X, start_time=20, tail_time=30, y=y)

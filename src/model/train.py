@@ -5,13 +5,14 @@ import numpy as np
 
 
 class Trainer:
-    def __init__(self, model, loss, optimizer, device, scheduler=None):
+    def __init__(self, model, loss, optimizer, device, warmup_beta, scheduler=None):
         
         self.model = model
         self.loss = loss
         self.optimizer = optimizer
         self.device = device
         self.scheduler = scheduler
+        self.warmup_beta = warmup_beta
     
     def _calculate_metrics(self, targets, predictions):
         f1 = f1_score(targets, predictions, average='macro')

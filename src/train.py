@@ -10,7 +10,9 @@ class Trainer:
             device,
             num_epochs,
             train_dataloader, 
-            test_dataloader, 
+            test_dataloader,
+            warmup_beta,
+            max_beta, 
             scheduler=None):
         
         self.model = model
@@ -21,9 +23,11 @@ class Trainer:
         self.num_epochs = num_epochs
         self.train_dataloader = train_dataloader
         self.test_dataloader = test_dataloader
+        self.warmup_beta = warmup_beta
+        self.max_beta = max_beta
 
 
-    def _run_epoch(self, dataloader, is_training=True):
+    def _run_epoch(self, dataloader, is_training=True, beta=1.0):
         if is_training:
             self.model.train()
         else:
@@ -43,7 +47,7 @@ class Trainer:
                     self.optimizer.zero_grad()
 
                 outputs, mu, logvar = self.model(inputs)
-                total_loss, recon_loss, kl_loss = self.criterion(outputs, inputs.float().unsqueeze(1), mu, logvar, beta=0.0005)
+                total_loss, recon_loss, kl_loss = self.criterion(outputs, inputs.float().unsqueeze(1), mu, logvar, beta=beta)
 
                 if is_training:
                     total_loss.backward()
@@ -72,18 +76,21 @@ class Trainer:
         best_test_loss = float('inf')
 
         for epoch in range(self.num_epochs):
+            beta = min(self.max_beta, self.max_beta * (epoch + 1) / self.warmup_beta)
             print(f"Epoch -> {epoch + 1}/{self.num_epochs}")
 
             train_loss, train_recon_loss, train_kl_loss = self._run_epoch(
                 dataloader=self.train_dataloader,
+                beta=beta,
                 is_training=True
             )
             test_loss, test_recon_loss, test_kl_loss = self._run_epoch(
-                dataloader=self.train_dataloader,
-                is_training=True
+                dataloader=self.test_dataloader,
+                beta=beta,
+                is_training=False
             )
 
-            if best_test_loss > test_loss:
+            if best_test_loss > test_loss and (epoch + 1) >= self.warmup_beta:
                 best_test_loss = test_loss
                 torch.save(self.model.state_dict(), 'checkpoints/best_vae_model.pth')
 
@@ -91,13 +98,13 @@ class Trainer:
             print(f"TEST loss -> {test_loss}")
 
             #append in history
-            history["train_loss"] = train_loss
-            history["train_kl_loss"] = train_kl_loss
-            history['train_recon_loss'] = train_recon_loss
+            history["train_loss"].append(train_loss)
+            history["train_kl_loss"].append(train_kl_loss)
+            history['train_recon_loss'].append(train_recon_loss)
 
-            history["test_loss"] = test_loss
-            history["test_kl_loss"] = test_kl_loss
-            history['test_recon_loss'] = test_recon_loss
+            history["test_loss"].append(test_loss)
+            history["test_kl_loss"].append(test_kl_loss)
+            history['test_recon_loss'].append(test_recon_loss)
 
         return history
 

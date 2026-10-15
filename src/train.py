@@ -19,7 +19,7 @@ class Trainer:
         self.criterion = criterion
         self.optimizer = optimizer
         self.device = device
-        self.sheduler = scheduler
+        self.scheduler = scheduler
         self.num_epochs = num_epochs
         self.train_dataloader = train_dataloader
         self.test_dataloader = test_dataloader
@@ -56,6 +56,7 @@ class Trainer:
                 epoch_total_loss += total_loss.item()
                 epoch_reconstruction_loss += recon_loss.item()
                 epoch_kl_loss += kl_loss.item()
+            
 
         epoch_total_loss /= len(dataloader)
         epoch_reconstruction_loss /= len(dataloader)
@@ -72,6 +73,7 @@ class Trainer:
             "test_recon_loss": [],
             "train_kl_loss": [],
             "test_kl_loss": [],
+            "lr": []
         }
         best_test_loss = float('inf')
 
@@ -84,6 +86,11 @@ class Trainer:
                 beta=beta,
                 is_training=True
             )
+            
+            if self.scheduler is not None:
+                self.scheduler.step()
+                current_lr = self.scheduler.get_last_lr()[0]
+            
             test_loss, test_recon_loss, test_kl_loss = self._run_epoch(
                 dataloader=self.test_dataloader,
                 beta=beta,
@@ -105,6 +112,9 @@ class Trainer:
             history["test_loss"].append(test_loss)
             history["test_kl_loss"].append(test_kl_loss)
             history['test_recon_loss'].append(test_recon_loss)
+
+            if self.scheduler:
+                history['lr'].append(current_lr)
 
         return history
 

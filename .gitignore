@@ -1,5 +1,5 @@
 # Виртуальное окружение
-venv/
+.venv/
 env/
 
 # Кэш Python и Jupyter
@@ -10,8 +10,9 @@ __pycache__/
 # Данные и датасеты (генерируемые файлы)
 data/
 datasets/
+Liquid_scin/
 
 # Веса моделей PyTorch
 *.pt
 *.pth
-models/
+checkpoints/

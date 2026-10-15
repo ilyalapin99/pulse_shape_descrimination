@@ -41,7 +41,7 @@ class PulseAutoEncoder(nn.Module):
 
             # Сплющиваю
             nn.Flatten(),
-            nn.Linear(out_channels_first * 2 * 50, 64),
+            nn.Linear(out_channels_first * 2 * 36, 64),
             nn.ReLU(),
             nn.Linear(64, latent_dim)
             )
@@ -49,7 +49,7 @@ class PulseAutoEncoder(nn.Module):
         self.decoder_linear = nn.Sequential(
             nn.Linear(latent_dim, 64),
             nn.ReLU(),
-            nn.Linear(64, out_channels_first * 2 * 50)
+            nn.Linear(64, out_channels_first * 2 * 36)
         )
         self.decoder = nn.Sequential(
             nn.ConvTranspose1d(out_channels_first*2, out_channels_first, kernel_size=5, stride=2, padding=2, output_padding=1),
@@ -68,7 +68,7 @@ class PulseAutoEncoder(nn.Module):
         latent = self.encoder(x)
         x_recon = self.decoder_linear(latent)
 
-        x_recon = x_recon.view(-1, self.out_channels_first * 2, 50)
+        x_recon = x_recon.view(-1, self.out_channels_first * 2, 36)
         x_recon = self.decoder(x_recon)
         
         return x_recon, latent
@@ -92,7 +92,7 @@ class PulseVAE(nn.Module):
 
             # Сплющиваю
             nn.Flatten(),
-            nn.Linear(out_channels_first * 2 * 50, 64),
+            nn.Linear(out_channels_first * 2 * 36, 64),
             nn.ReLU(),
                
         )
@@ -102,7 +102,7 @@ class PulseVAE(nn.Module):
         self.decode_linear = nn.Sequential(
             nn.Linear(latent_dim, 64),
             nn.ReLU(),
-            nn.Linear(64, out_channels_first * 2 * 50)
+            nn.Linear(64, out_channels_first * 2 * 36)
         )
         self.decoder = nn.Sequential(
             nn.ConvTranspose1d(out_channels_first*2, out_channels_first, kernel_size=5, stride=2, padding=2, output_padding=1),
@@ -110,6 +110,7 @@ class PulseVAE(nn.Module):
             nn.ReLU(),
 
             nn.ConvTranspose1d(out_channels_first, 1, kernel_size=5, stride=2, padding=2, output_padding=1),
+            nn.Linear(144, 144)
         
           
 
@@ -133,11 +134,11 @@ class PulseVAE(nn.Module):
 
         x_recon = self.decode_linear(z)
 
-        x_recon = x_recon.view(-1, self.out_channels_first * 2, 50)
+        x_recon = x_recon.view(-1, self.out_channels_first * 2, 36)
         x_recon = self.decoder(x_recon)
         #print(x.shape)
-        max_amp = torch.max(x_recon, dim=-1, keepdim=True).values
-        x_recon = x_recon / (max_amp + 1e-8)
+        #max_amp = torch.max(x_recon, dim=-1, keepdim=True).values
+        #x_recon = x_recon / (max_amp + 1e-8)
 
         return x_recon, mu, logvar                
 
